@@ -1,33 +1,34 @@
 <template>
   <div class="app-container home">
     <el-row :gutter="20">
-      <el-col :sm="24" :lg="12" style="padding-left: 20px">
+      <el-col style="padding-left: 20px">
         <h2>知识管理平台</h2>
       </el-col>
     </el-row>
-    <div class="TopEchart" style="margin-bottom:100px;border:1px solid red">
-      <el-row :gutter="20">
-        <el-col :sm="24" :lg="12" style="margin-left:90px;margin-right:90px;padding-left: 20px">
-          <div class="echart" id="myBarchart" :style="myChartBarStyle"></div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :sm="24" :lg="12" style="margin-left:90px;margin-right:90px;padding-left: 20px">
-          <div class="echart" id="weather" :style="myChartWeatherStyle"></div>
-        </el-col>
-      </el-row>
+    <div class="chart">
+      <div class="pieChart">
+        <el-row :gutter="20">
+          <el-col :sm="24" :lg="12">
+            <div class="echart" id="mychart" :style="myChartStyle"></div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="linBarChart">
+        <el-row :gutter="20">
+          <el-col :sm="24" :lg="12">
+            <div class="echart" id="myMaxbar" :style="{width: '500px', height: '300px'}"></div>
+          </el-col>
+        </el-row>
+      </div>
     </div>
-    <div class="box">
-      <el-row :gutter="20">
-        <el-col :sm="24" :lg="12" style="margin-left:90px;margin-right:90px;padding-left: 20px">
-          <div class="echart" id="mychart" :style="myChartStyle"></div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :sm="24" :lg="12" style="margin-left:90px;margin-right:90px;padding-left: 20px">
-          <div id="container" :style="myChartStyleLine"></div>
-        </el-col>
-      </el-row>
+    <div class="lineChart">
+      <div class="line-container">
+        <el-row :gutter="20">
+          <el-col :sm="24" :lg="12" style="margin-right:90px;padding-left: 20px">
+            <div id="container" :style="myChartStyleLine"></div>
+          </el-col>
+        </el-row>
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +36,7 @@
 <script>
   import * as echarts from "echarts";
   export default {
+    components: {},
     name: "Index",
     data() {
       return {
@@ -61,299 +63,144 @@
           }
         ],
         pieName: [],
-        myChartStyle: {
+        myChartStyle: { // 饼形图
           float: "left",
           width: "400px",
           height: "400px"
-        }, //图表样式
-        myChartStyleLine: {
+        },
+        myChartStyleLine: { //折线图样式
           float: "left",
-          width: "300px",
+          width: "900px",
           height: "300px"
-        }, //图表样式
-        xData: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横坐标
-        yData: [23, 24, 18, 25, 27, 28, 25], //数据
-        myChartBarStyle: {
-          float: "left",
-          width: "300px",
-          height: "300px"
-        }, //图表样式
-        myChartWeatherStyle: {
-          float: "left",
-          width: "300px",
-          height: "300px"
-        }, //图表样式
+        },
       };
     },
     mounted() {
       this.initDate(); //数据初始化
-      this.initEcharts();
-      this.initEchartsLine();
-      this.initBarEcharts();
-      this.weather()
+      this.initEcharts(); // 饼图-样式
+      this.initEchartsLine(); // 折线图
+      this.drawLine();
     },
     methods: {
       goTarget(href) {
         window.open(href, "_blank");
       },
-      // 柱状图
-      initBarEcharts() {
-        // 基本柱状图
-        const option = {
-          xAxis: {
-            data: this.xData
-          },
-          yAxis: {},
-          series: [{
-            type: "bar", //形状为柱状图
-            data: this.yData
-          }]
-        };
-        const myChart = echarts.init(document.getElementById("myBarchart"));
-        myChart.setOption(option);
-        //随着屏幕大小调节图表
-        window.addEventListener("resize", () => {
-          myChart.resize();
-        });
-      },
-      // weather
-      weather() {
-        var dom = document.getElementById('weather');
-        var option = {
-          grid: {
-            show: true,
-            backgroundColor: 'transparent',
-            opacity: 0.3,
-            borderWidth: '0',
-            top: '180',
-            bottom: '0'
-          },
+      // 折线柱状图
+      drawLine() {
+        var chartDom = document.getElementById('myMaxbar');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        const yearCount = 7;
+        const categoryCount = 30;
+        const xAxisData = [];
+        const customData = [];
+        const legendData = [];
+        const dataList = [];
+        legendData.push('trend');
+        const encodeY = [];
+        for (var i = 0; i < yearCount; i++) {
+          legendData.push(2010 + i + '');
+          dataList.push([]);
+          encodeY.push(1 + i);
+        }
+        for (var i = 0; i < categoryCount; i++) {
+          var val = Math.random() * 1000;
+          xAxisData.push('category' + i);
+          var customVal = [i];
+          customData.push(customVal);
+          for (var j = 0; j < dataList.length; j++) {
+            var value =
+              j === 0 ?
+              echarts.number.round(val, 2) :
+              echarts.number.round(
+                Math.max(0, dataList[j - 1][i] + (Math.random() - 0.5) * 200),
+                2
+              );
+            dataList[j].push(value);
+            customVal.push(value);
+          }
+        }
+        option = {
           tooltip: {
             trigger: 'axis'
           },
           legend: {
-            show: false
+            data: legendData
           },
-          xAxis: [
-            // 日期
-            {
-              type: 'category',
-              boundaryGap: false,
-              position: 'top',
-              offset: 130,
-              zlevel: 100,
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                interval: 0,
-                formatter: [
-                  '{a|{value}}'
-                ].join('\n'),
-                rich: {
-                  a: {
-                    // color: 'white',
-                    fontSize: 18
-                  }
-                }
-              },
-              nameTextStyle: {
-
-              },
-              data: ["25日", "26日", "27日", "28日", "29日", "30日", "31日"]
+          dataZoom: [{
+              type: 'slider',
+              start: 50,
+              end: 70
             },
-            // 星期
             {
-              type: 'category',
-              boundaryGap: false,
-              position: 'top',
-              offset: 110,
-              zlevel: 100,
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                interval: 0,
-                formatter: [
-                  '{a|{value}}'
-                ].join('\n'),
-                rich: {
-                  a: {
-                    // color: 'white',
-                    fontSize: 14
-                  }
-                }
-              },
-              nameTextStyle: {
-                fontWeight: 'bold',
-                fontSize: 19
-              },
-              data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
-            },
-            // 天气图标
-            {
-              type: 'category',
-              boundaryGap: false,
-              position: 'top',
-              offset: 20,
-              zlevel: 100,
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                interval: 0,
-                formatter: function (value, index) {
-                  return '{' + index + '| }\n{b|' + value + '}'
-                },
-                rich: {
-                  0: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[0]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/小雨.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  1: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[1]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/小雨.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  2: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[2]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/阴.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  3: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[3]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/小雨.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  4: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[4]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/多云.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  5: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[5]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/小雨.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  6: {
-                    backgroundColor: {
-                      // image: require('@/assets/weather_icon/' + this.weatherIconDic[this.weatherdata.weather[6]] + '.png')
-                      image: 'https://d.scggqx.com/forecast/img/小雨.png'
-                    },
-                    height: 40,
-                    width: 40
-                  },
-                  b: {
-                    // color: 'white',
-                    fontSize: 12,
-                    lineHeight: 30,
-                    height: 20
-                  }
-                }
-              },
-              nameTextStyle: {
-                fontWeight: 'bold',
-                fontSize: 19
-              },
-              // data: this.weatherdata.weather
-              data: ["小雨", "小雨", "阴", "小雨", "多云", "小雨", "小雨"]
+              type: 'inside',
+              start: 50,
+              end: 70
             }
           ],
-          yAxis: {
-            type: 'value',
-            show: false,
-            axisLabel: {
-              formatter: '{value} °C',
-              color: 'white'
-            }
+          xAxis: {
+            data: xAxisData
           },
+          yAxis: {},
           series: [{
-              name: '最高气温',
-              type: 'line',
-              data: ["16.3", "16.2", "17.6", "14.2", "17.6", "15.7", "14.3"],
-              symbol: 'emptyCircle',
-              symbolSize: 10,
-              showSymbol: true,
-              smooth: true,
-              itemStyle: {
-                normal: {
-                  color: '#C95843'
+              type: 'custom',
+              name: 'trend',
+              renderItem: function (params, api) {
+                var xValue = api.value(0);
+                var currentSeriesIndices = api.currentSeriesIndices();
+                var barLayout = api.barLayout({
+                  barGap: '30%',
+                  barCategoryGap: '20%',
+                  count: currentSeriesIndices.length - 1
+                });
+                var points = [];
+                for (var i = 0; i < currentSeriesIndices.length; i++) {
+                  var seriesIndex = currentSeriesIndices[i];
+                  if (seriesIndex !== params.seriesIndex) {
+                    var point = api.coord([xValue, api.value(seriesIndex)]);
+                    point[0] += barLayout[i - 1].offsetCenter;
+                    point[1] -= 20;
+                    points.push(point);
+                  }
                 }
+                var style = api.style({
+                  stroke: api.visual('color'),
+                  fill: 'none'
+                });
+                return {
+                  type: 'polyline',
+                  shape: {
+                    points: points
+                  },
+                  style: style
+                };
               },
-              label: {
-                show: true,
-                position: 'top',
-                // color: 'white',
-                formatter: '{c} °C'
+              itemStyle: {
+                borderWidth: 2
               },
-              lineStyle: {
-                width: 1,
-                // color: 'white'
+              encode: {
+                x: 0,
+                y: encodeY
               },
-              areaStyle: {
-                opacity: 1,
-                color: 'transparent'
-              }
+              data: customData,
+              z: 100
             },
-            {
-              name: '最低气温',
-              type: 'line',
-              data: ["13.4", "12.8", "13.5", "12.5", "12.4", "13.2", "13"],
-              symbol: 'emptyCircle',
-              symbolSize: 10,
-              showSymbol: true,
-              smooth: true,
-              itemStyle: {
-                normal: {
-                  color: 'blue'
-                }
-              },
-              label: {
-                show: true,
-                position: 'bottom',
-                // color: 'white',
-                formatter: '{c} °C'
-              },
-              lineStyle: {
-                width: 1,
-                // color: 'white'
-              },
-              areaStyle: {
-                opacity: 1,
-                color: 'transparent'
-              }
-            }
+            ...dataList.map(function (data, index) {
+              return {
+                type: 'bar',
+                animation: false,
+                name: legendData[index + 1],
+                itemStyle: {
+                  opacity: 0.5
+                },
+                data: data
+              };
+            })
           ]
-        }
-        console.log('option:', option)
+        };
+
+        option && myChart.setOption(option);
       },
       initDate() {
         for (let i = 0; i < this.pieData.length; i++) {
@@ -361,7 +208,6 @@
         }
 
       },
-      // 饼形图示例
       /**
        * 饼图-样式
        */
@@ -371,15 +217,15 @@
           legend: {
             // 图例
             data: this.pieName,
-            right: "10%",
-            top: "30%",
-            orient: "vertical"
+            // right: "10%",
+            // top: "30%",
+            // orient: "top"
           },
           title: {
             // 设置饼图标题，位置设为顶部居中
-            text: "国内院士前五省份图示",
-            top: "0%",
-            left: "center"
+            // text: "国内院士前五省份图示",
+            // top: "0%",
+
           },
           series: [{
             type: "pie",
@@ -417,7 +263,7 @@
 
         var option = {
           title: {
-            text: 'Stacked Line'
+            // text: 'Stacked Line'
           },
           tooltip: {
             trigger: 'axis'
@@ -482,7 +328,7 @@
         }
 
         window.addEventListener('resize', myChart.resize);
-      }
+      },
     },
   };
 
@@ -490,6 +336,9 @@
 
 <style scoped lang="scss">
   .home {
+    display: flex;
+    flex-wrap: wrap;
+
     blockquote {
       padding: 10px 20px;
       margin: 0 0 20px;
@@ -497,11 +346,31 @@
       border-left: 5px solid #eee;
     }
 
-    .box {
+    .chart {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       margin-top: 40px;
-      border: 1px solid black;
+
+      .pieChart {
+        margin-left: 40px;
+      }
+
+      .linBarChart {
+        margin-right: 40px;
+      }
+    }
+
+    .lineChart {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      /* 水平居中 */
+      .line-container {
+        margin-left: 40px;
+        margin-right: 40px
+      }
     }
 
     hr {

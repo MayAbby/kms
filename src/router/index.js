@@ -70,7 +70,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/index'),
         name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
+        meta: { title: '知识管理系统', icon: 'dashboard', affix: true }
       }
     ]
   },
@@ -92,6 +92,20 @@ export const constantRoutes = [
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
+  {
+    path: '/papers/file/file',
+    component: Layout,
+    hidden: true,
+    permissions: ['word:post:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/word/list/index'),
+        name: 'Project',
+        meta: { title: '项目文档', activeMenu: '/papers/file' }
+      }
+    ]
+  },
   {
     path: '/system/user-auth',
     component: Layout,

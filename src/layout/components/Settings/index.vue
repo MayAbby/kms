@@ -9,20 +9,26 @@
           <div class="setting-drawer-block-checbox">
             <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-dark')">
               <img src="@/assets/images/dark.svg" alt="dark">
-              <div v-if="sideTheme === 'theme-dark'" class="setting-drawer-block-checbox-selectIcon" style="display: block;">
+              <div v-if="sideTheme === 'theme-dark'" class="setting-drawer-block-checbox-selectIcon"
+                style="display: block;">
                 <i aria-label="图标: check" class="anticon anticon-check">
-                  <svg viewBox="64 64 896 896" data-icon="check" width="1em" height="1em" :fill="theme" aria-hidden="true" focusable="false" class="">
-                    <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
+                  <svg viewBox="64 64 896 896" data-icon="check" width="1em" height="1em" :fill="theme"
+                    aria-hidden="true" focusable="false" class="">
+                    <path
+                      d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z" />
                   </svg>
                 </i>
               </div>
             </div>
             <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-light')">
               <img src="@/assets/images/light.svg" alt="light">
-              <div v-if="sideTheme === 'theme-light'" class="setting-drawer-block-checbox-selectIcon" style="display: block;">
+              <div v-if="sideTheme === 'theme-light'" class="setting-drawer-block-checbox-selectIcon"
+                style="display: block;">
                 <i aria-label="图标: check" class="anticon anticon-check">
-                  <svg viewBox="64 64 896 896" data-icon="check" width="1em" height="1em" :fill="theme" aria-hidden="true" focusable="false" class="">
-                    <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
+                  <svg viewBox="64 64 896 896" data-icon="check" width="1em" height="1em" :fill="theme"
+                    aria-hidden="true" focusable="false" class="">
+                    <path
+                      d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z" />
                   </svg>
                 </i>
               </div>
@@ -35,10 +41,10 @@
           </div>
         </div>
 
-        <el-divider/>
+        <el-divider />
 
         <h3 class="drawer-title">系统布局配置</h3>
-      
+
         <div class="drawer-item">
           <span>开启 TopNav</span>
           <el-switch v-model="topNav" class="drawer-switch" />
@@ -64,7 +70,7 @@
           <el-switch v-model="dynamicTitle" class="drawer-switch" />
         </div>
 
-        <el-divider/>
+        <el-divider />
 
         <el-button size="small" type="primary" plain icon="el-icon-document-add" @click="saveSetting">保存配置</el-button>
         <el-button size="small" plain icon="el-icon-refresh" @click="resetSetting">重置配置</el-button>
@@ -74,102 +80,105 @@
 </template>
 
 <script>
-import ThemePicker from '@/components/ThemePicker'
+  import ThemePicker from '@/components/ThemePicker'
 
-export default {
-  components: { ThemePicker },
-  data() {
-    return {
-      theme: this.$store.state.settings.theme,
-      sideTheme: this.$store.state.settings.sideTheme
-    };
-  },
-  computed: {
-    visible: {
-      get() {
-        return this.$store.state.settings.showSettings
-      }
+  export default {
+    components: {
+      ThemePicker
     },
-    fixedHeader: {
-      get() {
-        return this.$store.state.settings.fixedHeader
-      },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'fixedHeader',
-          value: val
-        })
-      }
+    data() {
+      return {
+        theme: this.$store.state.settings.theme,
+        sideTheme: this.$store.state.settings.sideTheme
+      };
     },
-    topNav: {
-      get() {
-        return this.$store.state.settings.topNav
-      },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'topNav',
-          value: val
-        })
-        if (!val) {
-          this.$store.dispatch('app/toggleSideBarHide', false);
-          this.$store.commit("SET_SIDEBAR_ROUTERS", this.$store.state.permission.defaultRoutes);
+    computed: {
+      visible: {
+        get() {
+          return this.$store.state.settings.showSettings
         }
-      }
-    },
-    tagsView: {
-      get() {
-        return this.$store.state.settings.tagsView
       },
-      set(val) {
+      fixedHeader: {
+        get() {
+          return this.$store.state.settings.fixedHeader
+        },
+        set(val) {
+          this.$store.dispatch('settings/changeSetting', {
+            key: 'fixedHeader',
+            value: val
+          })
+        }
+      },
+      topNav: {
+        get() {
+          return this.$store.state.settings.topNav
+        },
+        set(val) {
+          this.$store.dispatch('settings/changeSetting', {
+            key: 'topNav',
+            value: val
+          })
+          if (!val) {
+            this.$store.dispatch('app/toggleSideBarHide', false);
+            this.$store.commit("SET_SIDEBAR_ROUTERS", this.$store.state.permission.defaultRoutes);
+          }
+        }
+      },
+      tagsView: {
+        get() {
+          return this.$store.state.settings.tagsView
+        },
+        set(val) {
+          console.log('val:', val)
+          this.$store.dispatch('settings/changeSetting', {
+            key: 'tagsView',
+            value: val
+          })
+        }
+      },
+      sidebarLogo: {
+        get() {
+          return this.$store.state.settings.sidebarLogo
+        },
+        set(val) {
+          this.$store.dispatch('settings/changeSetting', {
+            key: 'sidebarLogo',
+            value: val
+          })
+        }
+      },
+      dynamicTitle: {
+        get() {
+          return this.$store.state.settings.dynamicTitle
+        },
+        set(val) {
+          this.$store.dispatch('settings/changeSetting', {
+            key: 'dynamicTitle',
+            value: val
+          })
+        }
+      },
+    },
+    methods: {
+      themeChange(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'tagsView',
+          key: 'theme',
           value: val
         })
-      }
-    },
-    sidebarLogo: {
-      get() {
-        return this.$store.state.settings.sidebarLogo
+        this.theme = val;
       },
-      set(val) {
+      handleTheme(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'sidebarLogo',
+          key: 'sideTheme',
           value: val
         })
-      }
-    },
-    dynamicTitle: {
-      get() {
-        return this.$store.state.settings.dynamicTitle
+        this.sideTheme = val;
       },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'dynamicTitle',
-          value: val
-        })
-      }
-    },
-  },
-  methods: {
-    themeChange(val) {
-      this.$store.dispatch('settings/changeSetting', {
-        key: 'theme',
-        value: val
-      })
-      this.theme = val;
-    },
-    handleTheme(val) {
-      this.$store.dispatch('settings/changeSetting', {
-        key: 'sideTheme',
-        value: val
-      })
-      this.sideTheme = val;
-    },
-    saveSetting() {
-      this.$modal.loading("正在保存到本地，请稍候...");
-      this.$cache.local.set(
-        "layout-setting",
-        `{
+      saveSetting() {
+        this.$modal.loading("正在保存到本地，请稍候...");
+        this.$cache.local.set(
+          "layout-setting",
+          `{
             "topNav":${this.topNav},
             "tagsView":${this.tagsView},
             "fixedHeader":${this.fixedHeader},
@@ -178,16 +187,17 @@ export default {
             "sideTheme":"${this.sideTheme}",
             "theme":"${this.theme}"
           }`
-      );
-      setTimeout(this.$modal.closeLoading(), 1000)
-    },
-    resetSetting() {
-      this.$modal.loading("正在清除设置缓存并刷新，请稍候...");
-      this.$cache.local.remove("layout-setting")
-      setTimeout("window.location.reload()", 1000)
+        );
+        setTimeout(this.$modal.closeLoading(), 1000)
+      },
+      resetSetting() {
+        this.$modal.loading("正在清除设置缓存并刷新，请稍候...");
+        this.$cache.local.remove("layout-setting")
+        setTimeout("window.location.reload()", 1000)
+      }
     }
   }
-}
+
 </script>
 
 <style lang="scss" scoped>
@@ -257,4 +267,5 @@ export default {
       float: right
     }
   }
+
 </style>
